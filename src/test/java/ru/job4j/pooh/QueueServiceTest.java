@@ -21,4 +21,28 @@ public class QueueServiceTest {
         );
         assertThat(result.text(), is("temperature=18"));
     }
+
+    @Test
+    public void when2PostThen2GetQueue() {
+        QueueService queueService = new QueueService();
+        String paramForPostMethod = "temperature=18";
+        String paramForPostMethod2 = "temperature=28";
+
+        /* Добавляем данные в очередь weather. Режим queue */
+        queueService.process(
+                new Req("POST", "queue", "weather", paramForPostMethod)
+        );
+        queueService.process(
+                new Req("POST", "queue", "weather", paramForPostMethod2)
+        );
+        /* Забираем данные из очереди weather. Режим queue */
+        Resp result = queueService.process(
+                new Req("GET", "queue", "weather", null)
+        );
+        Resp result2 = queueService.process(
+                new Req("GET", "queue", "weather", null)
+        );
+        assertThat(result.text(), is("temperature=18"));
+        assertThat(result2.text(), is("temperature=28"));
+    }
 }
