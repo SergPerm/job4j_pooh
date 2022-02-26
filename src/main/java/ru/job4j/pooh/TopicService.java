@@ -11,7 +11,7 @@ public class TopicService implements Service {
 
     @Override
     public Resp process(Req req) {
-        Resp result  = new Resp("Bad request", "400");
+        Resp result  = new Resp("Bad request in program", "400");
         if ("POST".equals(req.httpRequestType())) {
             String topicName = req.getSourceName();
             String text = req.getParam();
