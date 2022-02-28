@@ -10,25 +10,34 @@ public class QueueService implements Service {
 
     @Override
     public Resp process(Req req) {
-        Resp result  = new Resp("Bad request", "400");
-        if ("POST".equals(req.httpRequestType())) {
-            String sourceName = req.getSourceName();
-            String text = req.getParam();
-            ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
-            queue.add(text);
-            queue = mapWithQueue.putIfAbsent(sourceName, queue);
-            if (queue != null) {
+        Resp result;
+        switch (req.httpRequestType()) {
+            case "POST" -> {
+                String sourceName = req.getSourceName();
+                String text = req.getParam();
+                ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
                 queue.add(text);
+                queue = mapWithQueue.putIfAbsent(sourceName, queue);
+                if (queue != null) {
+                    queue.add(text);
+                }
+                result = new Resp("", "200");
             }
-            result = new Resp("Post added", "200");
-        }
-        if ("GET".equals(req.httpRequestType())) {
-            ConcurrentLinkedQueue<String> queue = mapWithQueue.get(req.getSourceName());
-            if (queue == null) {
-                result = new Resp("Empty queue", "204");
-            } else {
-                String text = queue.poll();
-                result = new Resp(text, "200");
+            case "GET" -> {
+                ConcurrentLinkedQueue<String> queue = mapWithQueue.get(req.getSourceName());
+                if (queue == null) {
+                    result = new Resp("", "204");
+                } else {
+                    String text = queue.poll();
+                    if (text == null) {
+                        result = new Resp("", "204");
+                    } else {
+                        result = new Resp(text, "200");
+                    }
+                }
+            }
+            default -> {
+                result = new Resp("Not implemented", "400");
             }
         }
         return result;
