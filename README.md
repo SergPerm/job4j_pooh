@@ -4,6 +4,8 @@
 
 create branch in IDEA
 
+create new branch
+
 3.3. Объединение нескольких коммитов. [#33084]
 3.3. Объединение нескольких кoммитов. [#33084] fast-forward
 
